@@ -1,7 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Windows.Forms;
+using System.Data.SQLite;
 
 namespace QueApp
 {
@@ -15,7 +14,15 @@ namespace QueApp
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new Form1());
+
+            string path = "URI=file:queapp.db";
+            using (SQLiteConnection conn = new SQLiteConnection(path))
+            {
+                conn.Open();
+                Database database = new Database(conn);
+                Application.Run(new Form1(database));
+                conn.Close();
+            }
         }
     }
 }

@@ -8,8 +8,11 @@ namespace QueApp
 {
     public partial class Form1 : Form
     {
-        public Form1()
+        private Database database;
+
+        public Form1(Database database)
         {
+            this.database = database;
             InitializeComponent();
         }
 
