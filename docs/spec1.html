@@ -1,0 +1,149 @@
+﻿<html lang="ja">
+<head>
+<link rel="stylesheet" type="text/css" href="../style.css">
+<title>質問管理アプリ 要求仕様書</title>
+<style><!--
+.red { color: red; }
+--></style>
+<body>
+<h1>質問管理アプリ 要求仕様書</h1>
+
+<div align=right>
+作成者: 新山<br>
+作成日: 2016/04/27 (バージョン 1)
+</div>
+
+
+<h2>1. 概要</h2>
+<p>
+この文書は、新山が作る質問管理アプリに関する要求仕様書です。
+
+<h3>1.1. アプリを作る目的</h3>
+<ul>
+<li> <u>目的1</u>. 授業で生徒にいつ、どのような質問をしたかを記録しておきたい。
+<li> <u>目的2</u>. 生徒の受け答えを簡単に記録しておきたい。あとで成績評価にも使えるようにする。
+<li> <u>目的3</u>. 「次にだれに当てるか」をランダムに生成したい。
+</ul>
+
+<h3>1.2. アプリへの要求</h3>
+<ul>
+<li> <u>要求1</u>. ボタンを押すと、次に当てる人を表示するようにする。(ただし公平に)
+<li> <u>要求2</u>. 質問した内容が記録できればする(オプション)。質問した時刻はつねに記録する。
+<li> <u>要求3</u>. 他の作業を邪魔しないように、アプリはシステムトレイに常駐するのが望ましい。
+<li> <u>要求4</u>. 操作は極力簡単にする。キーボードでも操作できるようにする。
+<li> <u>要求5</u>. 生徒の名前一覧はCSVファイルから取り込めるようにする。
+<li> <u>要求6</u>. 複数のクラスを登録・切り替え可能にする。
+  (ただし、各生徒はクラスごとに毎回登録することにする)
+<li> <u>要求7</u>. 結果はCSVファイルとして出力できる。
+</ul>
+
+<h3>1.3. アプリが扱う情報</h3>
+<ul>
+<li> <u>情報1</u>. 各生徒を当てた時刻。
+<li> <u>情報2</u>. そのときの質問内容。
+<li> <u>情報3</u>. そのときの生徒の受け答えのよしあし (0〜100点)。
+</ul>
+
+
+<h2>2. 画面および操作方法</h2>
+
+<h3>2.1. 画面</h3>
+
+<h4>画面1. 入力画面</h4>
+<div class=figure>
+<svg xmlns="http://www.w3.org/2000/svg" 
+     xmlns:xlink="http://www.w3.org/1999/xlink"
+     version="1.1" width="300" height="140">
+  <g fill="none" stroke="black">
+    <rect x="10" y="10" width="200" height="120" stroke-width="2" />
+    <rect x="95" y="65" width="80" height="20" />
+    <rect x="45" y="92" width="30" height="20" />
+    <rect x="85" y="92" width="30" height="20" />
+    <rect x="140" y="92" width="40" height="20" />
+  </g>
+  <text x="110" y="30" text-anchor="middle">クラス: NI62</text>
+  <text x="20" y="60">次の生徒: だれか</text>
+  <text x="20" y="80">質問内容: </text>
+  <text x="60" y="110" text-anchor="middle">○</text>
+  <text x="100" y="110" text-anchor="middle">×</text>
+  <text x="160" y="110" text-anchor="middle">欠席</text>
+</svg>
+</div>
+<ul>
+<li> 「次の生徒」に当てる生徒の名前がランダムに表示される。
+<li> 必要に応じて「質問内容」に文字を入力できる。(しなくてもよい)
+<li> 「○」「×」「欠席」のどれかを押すと現在時刻と点数が記録され、次の生徒に進む。
+  <p> (この操作はキーボードからもできるようにする)
+</ul>
+
+<h4>画面2. 結果表示画面</h4>
+<div class=figure>
+<svg xmlns="http://www.w3.org/2000/svg" 
+     xmlns:xlink="http://www.w3.org/1999/xlink"
+     version="1.1" width="300" height="200">
+  <g fill="none" stroke="black">
+    <rect x="10" y="10" width="280" height="180" stroke-width="2" />
+  </g>
+  <text x="150" y="30" text-anchor="middle">クラス: NI62</text>
+  <text x="20" y="60">19:05</text>
+  <text x="20" y="80">19:07</text>
+  <text x="20" y="100">19:11</text>
+  <text x="20" y="120">19:29</text>
+  <text x="20" y="140">20:36</text>
+  <text x="20" y="160">21:04</text>
+  <text x="20" y="180">...</text>
+
+  <text x="70" y="60">生徒A</text>
+  <text x="70" y="80">生徒B</text>
+  <text x="70" y="100">生徒C</text>
+  <text x="70" y="120">生徒A</text>
+  <text x="70" y="140">生徒B</text>
+  <text x="70" y="160">生徒C</text>
+  <text x="70" y="180">...</text>
+
+  <text x="120" y="60">欠席</text>
+  <text x="120" y="80">○</text>
+  <text x="120" y="100">×</text>
+  <text x="120" y="120">○</text>
+  <text x="120" y="140">×</text>
+  <text x="120" y="160">○</text>
+  <text x="120" y="180">...</text>
+
+  <text x="160" y="60">C#</text>
+  <text x="160" y="80">数学</text>
+  <text x="160" y="120">mysql</text>
+
+</svg>
+</div>
+<p>
+この画面では、ウィンドウを閉じる以外の操作はない。
+
+<h3>2.2. メニュー</h3>
+<p>
+このアプリにはひとつのメニューがあり、
+以下のコマンドを選択できる。
+<dl>
+  <dt> <u>コマンド 1.</u> 「<code>新規クラス登録...</code>」
+  <dd> CSVファイルを開くためのダイアログが表示される。
+    ファイルを開くと、CSVファイル中の名前が新規クラスとして登録される。
+    
+  <dt> <u>コマンド 2.</u> 「<code>クラス選択...</code>」
+  <dd> 現在のクラスを変更する。
+    すでに登録ずみのクラス一覧が表示され、その中から選ぶ。
+
+  <dt> <u>コマンド 3.</u> 「<code>授業開始</code>」
+  <dd> 入力画面 (画面 2.1) を表示する。
+
+  <dt> <u>コマンド 4.</u> 「<code>結果表示</code>」
+  <dd> 結果表示画面 (画面 2.2) を表示する。
+
+  <dt> <u>コマンド 5.</u> 「<code>結果出力...</code>」
+  <dd> 現在のクラスの当て順・結果を CSVファイルとして保存する。
+
+  <dt> <u>コマンド 6.</u> 「<code>結果クリア...</code>」
+  <dd> 確認ダイアログ後、現在のクラスの当て順・結果をリセットする。
+
+  <dt> <u>コマンド 7.</u> 「<code>終了</code>」
+  <dd> アプリを終了する。
+
+</dl>
