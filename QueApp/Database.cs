@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Collections.Generic;
 using System.Data.SQLite;
 
@@ -116,5 +117,74 @@ namespace QueApp
             }
             return classId;
         }
+
+        public static string[][] ParseCSVFile(string path)
+        {
+            List<string[]> rows = new List<string[]>();
+            using (StreamReader reader = new StreamReader(path))
+            {
+                while (true)
+                {
+                    string line = reader.ReadLine();
+                    if (line == null) break;
+                    List<string> cols = new List<string>();
+                    int colstart = 0;
+                    for (int i = 0; i < line.Length; i++)
+                    {
+                        char c = line[i];
+                        if (c == ',')
+                        {
+                            string value = line.Substring(colstart, i - colstart);
+                            cols.Add(value);
+                            colstart = i + 1;
+                        }
+                    }
+                    cols.Add(line.Substring(colstart));
+                    rows.Add(cols.ToArray());
+                }
+            }
+            return rows.ToArray();
+        }
+
+        public int GetNextStudentId(int classId)
+        {
+            List<int> students = new List<int>();
+            using (SQLiteCommand cmd = new SQLiteCommand(this.connection))
+            {
+                try
+                {
+                    cmd.CommandText = "SELECT studentId, count(questionId) FROM Question, Student WHERE classId=@classId;";
+                    cmd.Prepare();
+                    cmd.Parameters.AddWithValue("@classId", classId);
+                    using (SQLiteDataReader reader = cmd.ExecuteReader())
+                    {
+                        int mincount = int.MaxValue;
+                        while (reader.Read())
+                        {
+                            int studentId = reader.GetInt32(0);
+                            int count = reader.GetInt32(1);
+                            if (count < mincount)
+                            {
+                                mincount = count;
+                                students.Clear();
+                            }
+                            if (count == mincount)
+                            {
+                                students.Add(studentId);
+                            }
+                        }
+                    }
+                }
+                catch (SQLiteException e)
+                {
+                    Console.WriteLine("Database.GetClassName: " + e);
+                }
+            }
+
+            Random rand = new Random();
+            int i = rand.Next(students.Count);
+            return students[i];
+        }
     }
+
 }
