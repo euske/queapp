@@ -16,11 +16,18 @@ namespace QueApp {
         private void createTables() {
             using (SQLiteCommand cmd = new SQLiteCommand(this.connection)) {
                 try {
-                    cmd.CommandText = "CREATE TABLE Class (classId INTEGER PRIMARY KEY, className TEXT);";
+                    cmd.CommandText = (
+                        "CREATE TABLE Class "+
+                        "(classId INTEGER PRIMARY KEY, className TEXT);");
                     cmd.ExecuteNonQuery();
-                    cmd.CommandText = "CREATE TABLE Student (studentId INTEGER PRIMARY KEY, classId INTEGER, studentName TEXT);";
+                    cmd.CommandText = (
+                        "CREATE TABLE Student "+
+                        "(studentId INTEGER PRIMARY KEY, classId INTEGER, studentName TEXT);");
                     cmd.ExecuteNonQuery();
-                    cmd.CommandText = "CREATE TABLE Question (questionId INTEGER PRIMARY KEY, studentId INTEGER, classId INTEGER, questionDate TEXT, questionText TEXT, answerScore INTEGER);";
+                    cmd.CommandText = (
+                        "CREATE TABLE Question "+
+                        "(questionId INTEGER PRIMARY KEY, studentId INTEGER, classId INTEGER,"+
+                        " questionDate TEXT, questionText TEXT, answerScore INTEGER);");
                     cmd.ExecuteNonQuery();
                     Console.WriteLine("Database: SQLite tables created.");
                 }
@@ -122,7 +129,9 @@ namespace QueApp {
             List<int> students = new List<int>();
             using (SQLiteCommand cmd = new SQLiteCommand(this.connection)) {
                 try {
-                    cmd.CommandText = "SELECT studentId, count(questionId) FROM Question WHERE classId=@classId;";
+                    cmd.CommandText = (
+                        "SELECT studentId, count(questionId) FROM Question "+
+                        "WHERE classId=@classId;");
                     cmd.Prepare();
                     cmd.Parameters.AddWithValue("@classId", classId);
                     using (SQLiteDataReader reader = cmd.ExecuteReader()) {
@@ -154,7 +163,9 @@ namespace QueApp {
             string name = null;
             using (SQLiteCommand cmd = new SQLiteCommand(this.connection)) {
                 try {
-                    cmd.CommandText = "SELECT studentName FROM Student WHERE studentId=@studentId;";
+                    cmd.CommandText = (
+                        "SELECT studentName FROM Student "+
+                        "WHERE studentId=@studentId;");
                     cmd.Prepare();
                     cmd.Parameters.AddWithValue("@studentId", studentId);
                     using (SQLiteDataReader reader = cmd.ExecuteReader()) {
@@ -173,7 +184,9 @@ namespace QueApp {
         public void StoreResult(int studentId, string questionText, int answerScore) {
             using (SQLiteCommand cmd = new SQLiteCommand(this.connection)) {
                 try {
-                    cmd.CommandText = "INSERT INTO Question (studentId, questionDate, questionText, answerScore) VALUES (@studentId, datetime('now'), @questionText, @answerScore);";
+                    cmd.CommandText = (
+                        "INSERT INTO Question (studentId, questionDate, questionText, answerScore) "+
+                        "VALUES (@studentId, datetime('now'), @questionText, @answerScore);");
                     cmd.Prepare();
                     cmd.Parameters.AddWithValue("@studentId", studentId);
                     cmd.Parameters.AddWithValue("@questionText", questionText);
@@ -194,7 +207,10 @@ namespace QueApp {
             result.Columns.Add("QuestionText", typeof(string));
             using (SQLiteCommand cmd = new SQLiteCommand(this.connection)) {
                 try {
-                    cmd.CommandText = "SELECT questionDate, studentName, answerScore, questionText FROM Question, Student WHERE Question.classId=@classId AND Question.studentId = Student.studentId;";
+                    cmd.CommandText = (
+                        "SELECT questionDate, studentName, answerScore, questionText "+
+                        "FROM Question, Student WHERE Question.classId=@classId "+
+                        "AND Question.studentId = Student.studentId;");
                     cmd.Prepare();
                     cmd.Parameters.AddWithValue("@classId", classId);
                     using (SQLiteDataReader reader = cmd.ExecuteReader()) {
@@ -233,7 +249,10 @@ namespace QueApp {
             using (StreamWriter writer = new StreamWriter(path)) {
                 using (SQLiteCommand cmd = new SQLiteCommand(this.connection)) {
                     try {
-                        cmd.CommandText = "SELECT questionDate, studentName, answerScore, questionText FROM Question, Student WHERE Question.classId=@classId AND Question.studentId = Student.studentId;";
+                        cmd.CommandText = (
+                            "SELECT questionDate, studentName, answerScore, questionText "+
+                            "FROM Question, Student WHERE Question.classId=@classId "+
+                            "AND Question.studentId = Student.studentId;");
                         cmd.Prepare();
                         cmd.Parameters.AddWithValue("@classId", classId);
                         using (SQLiteDataReader reader = cmd.ExecuteReader()) {
@@ -242,7 +261,8 @@ namespace QueApp {
                                 string studentName = reader.GetString(1);
                                 int answerScore = reader.GetInt32(2);
                                 string questionText = reader.GetString(3);
-                                string line = questionDate + "," + studentName + "," + answerScore + "," + questionText;
+                                string line = string.Format("{0},{1},{2},{3}",
+                                    questionDate, studentName, answerScore, questionText);
                                 writer.WriteLine(line);
                             }
                         }
