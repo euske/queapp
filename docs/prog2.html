@@ -1,0 +1,320 @@
+﻿<html lang="ja">
+<head>
+<link rel="stylesheet" type="text/css" href="../style.css">
+<title>質問管理アプリ プログラム仕様書</title>
+<style><!--
+.problem { color: red; }
+--></style>
+<body>
+<h1>質問管理アプリ プログラム仕様書</h1>
+
+<div align=right>
+作成者: 新山<br>
+作成日: 2016/06/13 (バージョン 2)
+</div>
+
+
+<h2>バージョン1 からの変更点:</h2>
+<ul>
+  <li> <code>Student</code>テーブルに新しい列 <code>classId</code> を加えた。
+</ul>
+
+
+<h2>1. 概要</h2>
+<p>
+この文書は、新山が作る質問管理アプリのプログラム仕様書である。
+実際の C# コードを書くプログラマに読まれることを想定している。
+
+
+<h2>2. データベース設計</h2>
+
+<h4><code>Class</code>テーブル</h4>
+<table border>
+<tr><th>列名</th><th>型</th><th>説明</th></tr>
+<tr><td><u><code>classId</code></u></td><td>INTEGER</td><td>クラスID</td></tr>
+<tr><td><code>className</code></td><td>TEXT</td><td>クラス名</td></tr>
+</table>
+
+<h4><code>Student</code>テーブル</h4>
+<table border>
+<tr><th>列名</th><th>型</th><th>説明</th></tr>
+<tr><td><u><code>studentId</code></u></td><td>INTEGER</td><td>生徒ID</td></tr>
+<tr><td><code>classId</code></td><td>INTEGER</td><td>所属クラスID</td></tr>
+<tr><td><code>studentName</code></td><td>TEXT</td><td>生徒名</td></tr>
+</table>
+
+<h4><code>Question</code>テーブル</h4>
+<table border>
+<tr><th>列名</th><th>型</th><th>説明</th></tr>
+<tr><td><u><code>questionId</code></u></td><td>INTEGER</td><td>質問ID</td></tr>
+<tr><td><code>studentId</code></td><td>INTEGER</td><td>生徒ID</td></tr>
+<tr><td><code>questionDate</code></td><td>DATE</td><td>質問日時</td></tr>
+<tr><td><code>questionText</code></td><td>TEXT</td><td>質問メモ</td></tr>
+<tr><td><code>answerScore</code></td><td>INTEGER</td><td>点数</td></tr>
+</table>
+
+<h3><code>Database</code>クラス</h3>
+<p>
+データベース関連の処理を一括しておこなう。
+
+<h4>インスタンス変数</h4>
+<ul>
+  <li> <code>connection</code> (SQLite への接続)
+</ul>
+
+<h4>メソッド一覧</h4>
+<dl>
+  <dt> コンストラクタ
+  <dd>
+    SQLite との接続オブジェクトを <code>connection</code> 変数に保持しておく。
+    <p>
+    SQLite にまだテーブルが作られていない場合にそなえて <code>CREATE TABLE</code>文を発行し、
+    テーブルを作成する。(すでにテーブルが存在する場合はエラーとなるが、無視する)
+
+  <dt> <code>GetClassIds()</code>
+  <dd> 登録されているクラスIDの一覧を配列として返す。
+
+  <dt> <code>GetClassName(classId)</code>
+  <dd> 与えられたクラスIDに対応するクラス名を文字列として返す。
+
+  <dt> <code>RegisterNewClass(className, students)</code> (新規クラス登録処理)
+  <dd> 与えられたクラス名を <code>Class</code> テーブルに登録し、
+    新しい <code>classId</code> (主キー) を返す。
+    また、そのクラスに所属する生徒の一覧を <code>Student</code> テーブルに登録する。
+<blockquote><pre>
+INSERT INTO Class VALUES (classId, className);
+INSERT INTO Students VALUES (studentId, classId, studentName);
+...
+</pre></blockquote>
+
+  <dt> <code>ParseCSVFile(path)</code> (CSVファイル解析)
+  <dd> 与えられたパス名のCSVファイルを解析し、
+    結果を <code>string[][]</code> 型として返す。
+
+  <dt> <code>GetNextStudentId(classId)</code>
+  <dd>
+    <ol>
+      <li> 各生徒の質問数 (<code>Question</code> テーブルの行数) を列挙する。
+      <li> 質問数が最小の生徒IDの一覧を取り出す。
+      <li> その中のひとつをランダムに取り出し、返す。
+    </ol>
+
+  <dt> <code>GetStudentName(studentId)</code>
+  <dd> <code>Student</code> テーブルからこの生徒IDに対応する 
+    <code>studentName</code> を取得する。
+
+  <dt> <code>StoreResult(studentId, score)</code> (結果記録処理)
+  <dd> まず <code>questionTextField</code> の内容を文字列として取得する。
+    つぎに現在時刻を取得し、以下の SQL を実行する:
+<blockquote><pre>
+INSERT INTO Question VALUES (<u>questionId</u>, <u>studentId</u>, <u>現在時刻</u>, <u>questionTextField</u>, <u>score</u>)
+</pre></blockquote>
+
+  <dt> <code>GetQuestionResultTable(classId)</code> (結果取得処理)
+  <dd> 指定クラスの質問記録を記録した DataTable オブジェクトを作成し、返す。
+    <ul>
+      <li> カラム0: <code>Question.questionDate</code> の日時。
+      <li> カラム1: <code>Question.studentId</code> の生徒名。
+      <li> カラム2: <code>Question.answerScore</code> の数値に応じて、"○" か "×" を表示する。
+      <li> カラム3: <code>Question.questionText</code> の内容。
+    </ul>
+
+  <dt> <code>ResetResults(classId)</code> (結果リセット処理)
+  <dd> <code>Question</code> テーブルから、
+    現在のクラスの生徒の <code>studentId</code> が含まれている行をすべて削除する:
+<blockquote><pre>
+DELETE FROM Question WHERE studentId IN (SELECT studentId WHERE classId = クラスID);
+</pre></blockquote>
+
+  <dt> <code>ExportResultsToCSV(classId, path)</code> (結果保存処理)
+  <dd> <code>Question</code> テーブルを参照し、
+    現在のクラスの生徒の <code>studentId</code> が含まれている行を
+    すべて CSV ファイルに出力する。
+    このときの形式は、画面出力とほぼ同じにする:
+    <ul>
+      <li> 第1列目: <code>Question.questionDate</code> の日時。
+      <li> 第2列目: <code>Question.studentId</code> の生徒名。
+      <li> 第3列目: <code>Question.answerScore</code> の数値に応じて、○ か × を表示する。
+      <li> 第4列目: <code>Question.questionText</code> の内容。
+    </ul>
+
+</dl>
+
+
+<h2>3. メインループ</h2>
+
+<h3><code>QuaApp</code>クラス</h3>
+
+<h4>インスタンス変数</h4>
+<ul>
+  <li> <code>database</code> (Database クラス)
+  <li> <code>questionForm</code> (入力画面フォーム)
+  <li> <code>resultForm</code> (結果表示画面フォーム)
+</ul>
+
+<h4>メソッド一覧</h4>
+<dl>
+  <dt> アプリケーション開始時
+  <dd> SQLite と接続し、
+    <code>Database</code> オブジェクトを変数 <code>database</code> に初期化する。
+    <p>
+    その後、<code>QuestionForm</code> オブジェクトと 
+    <code>ResultForm</code> オブジェクトを
+    各1個ずつ作成し、<code>questionForm</code>、
+    <code>resultForm</code> 変数に保持しておく
+    (ただしこれらは最初は非表示にしておく)。
+    <p>
+    最後に、システムトレイのアイコンを表示し、メニューを登録する。
+    <p>
+    注意: sqlite ファイルは、アプリケーションの .exe ファイルと同じフォルダに
+    置かれるものとする。
+
+  <dt> アプリケーション終了時
+  <dd> SQLite との接続を閉じる。
+</dl>
+
+
+<h2>4. メニュー処理</h2>
+
+<h4>インスタンス変数</h4>
+<ul>
+  <li> <code>startClassMenu</code> 「<code>授業開始 &gt;</code>」
+    <p> サブメニューとしてクラスの一覧を表示する。
+    クラスが選ばれたら、そのクラス ID で <code>StartClass(classId)</code> を実行する。
+
+  <li> <code>showClassResultsMenu</code> 「<code>結果表示 &gt;</code>」
+    <p> サブメニューとしてクラスの一覧を表示する。
+    クラスが選ばれたら、そのクラス ID で <code>ShowClassResults(classId)</code> を実行する。
+
+  <li> <code>QuitItem</code> 「<code>終了</code>」
+    <p> アプリを終了する。
+</ul>
+
+<h4>メソッド一覧</h4>
+<dl>
+  <dt> メニュー初期化時
+  <dd> <code>RefreshSubmenus()</code> を実行する。
+    
+  <dt> <code>RefreshSubmenues()</code> (サブメニュー更新処理)
+  <dd> データベースからクラス一覧を取得し、
+    <code>startClassMenu</code> および 
+    <code>showClassResultsMenu</code> のサブメニュー一覧を更新する。
+
+  <dt> <code>RegisterNewClassItem()</code> 「<code>新規クラス登録...</code>」
+  <dd> CSVファイルを開くためのダイアログを表示する。
+    ファイル名 <code>path</code> が入力されたら、
+    まず CSV ファイルを解析する処理 <code>ParseCSVFile(path)</code> をおこなう。
+    得られた文字列の配列をもとに、
+    <code>RegisterNewClass(className, students)</code> をおこなう。
+
+  <dt> <code>StartClass(classId)</code> (入力画面表示処理) 
+  <dd> 指定された <code>classId</code> で入力画面 <code>QuestionForm</code> を初期化・表示する。
+
+  <dt> <code>ShowClassResults(classId)</code> (結果画面表示処理)
+  <dd> 指定された <code>classId</code> で表示画面 <code>ResultForm</code> を初期化・表示する。
+
+</dl>
+
+
+<h2>5. 画面処理</h2>
+
+<h3>画面1. <code>QuestionForm</code> (入力画面)</h3>
+
+<h4>インスタンス変数</h4>
+<ul>
+  <li> <code>classNameLabel</code> ラベル
+  <li> <code>studentNameLabel</code> ラベル
+  <li> <code>questionTextField</code> テキストボックス
+  <li> <code>answerOKButton</code> ボタン
+  <li> <code>answerNGButton</code> ボタン
+  <li> <code>reloadButton</code> ボタン
+  <li> <code>database</code> (Databaseオブジェクト)
+  <li> <code>classId</code> (現在のクラスID)
+  <li> <code>currentStudentId</code> (現在の生徒ID)
+</ul>
+
+<h4>メソッド一覧</h4>
+<dl>
+  <dt> オブジェクト生成時 (コンストラクタ)
+  <dd> Databaseオブジェクト <code>database</code> 
+    および、<code>classId</code> を初期化する。
+  
+  <dt> <code>QuestionForm.Load</code> 発生時
+  <dd> 現在のクラス名を取得し、classNameLabel に表示する。
+    つぎに <code>ShowNextStudent()</code> を実行する。
+
+  <dt> <code>answerOKButton.Click</code> 発生時
+  <dd> <code>ShowResult(currentStudentId, +1)</code> を実行する。
+    その後、<code>ShowNextStudent()</code> を実行する。
+
+  <dt> <code>answerNGButton.Click</code> 発生時
+  <dd> <code>ShowResult(currentStudentId, -1</code>) を実行する。
+    その後、<code>ShowNextStudent()</code> を実行する。
+
+  <dt> <code>reloadButton.Click</code> 発生時
+  <dd> 結果を記録せずに、<code>ShowNextStudent()</code> を実行する。
+
+  <dt> <code>ShowNextStudent()</code> (生徒名表示処理)
+  <dd> <code>GetNextStudentId()</code> で得られた次の生徒名を
+	<code>studentNameLabel</code> に表示する。
+	このときの生徒ID を <code>currentStudentId</code> に記録する。
+
+</dl>
+
+<h3>画面2. <code>ResultForm</code> (結果表示画面)</h3>
+
+<h4>インスタンス変数</h4>
+<ul>
+  <li> <code>classNameLabel</code> ラベル
+  <li> <code>questionResultsTableGrid</code> グリッド
+  <li> <code>resetResultsButton</code> ボタン
+  <li> <code>exportResultsToCSVButton</code> ボタン
+  <li> <code>database</code> (Databaseオブジェクト)
+  <li> <code>classId</code> (現在のクラスID)
+</ul>
+
+<h4>メソッド一覧</h4>
+<dl>
+  <dt> オブジェクト生成時 (コンストラクタ)
+  <dd> Databaseオブジェクト <code>database</code> 
+    および、<code>classId</code> を初期化する。
+  
+  <dt> <code>ResultForm.Load</code> 発生時
+  <dd> 現在のクラス名を取得し、
+    <code>classNameLabel</code> に表示する。
+    つぎに <code>ShowQuestionResults()</code> を実行する。
+
+  <dt> <code>resetResultsButton.Click</code> 発生時
+  <dd> 確認ダイアログを表示する。
+    <blockquote>「クラス className の結果を削除してもよろしいですか?」</blockquote>
+    <p> リセットが確認されたら、
+      <code>ResetResults(classId)</code> を実行する。
+
+  <dt> <code>exportResultsToCSVButton.Click</code> 発生時
+  <dd> ファイル保存ダイアログを表示する。
+    ファイル名 <code>path</code> が入力されたら、
+    <code>ExportResultsToCSV(classId, path)</code> を実行する。
+
+  <dt> <code>ShowQuestionResults(classId)</code> (結果表示処理)
+  <dd> 指定クラスの質問記録を表示する。
+    <code>GetQuestionResultTable(classId)</code> を実行し、
+    得られた DataTable オブジェクトを
+    <code>questionResultsTableGrid</code> のデータソースとして設定する。
+    <p> 注意: 表示項目数が多すぎる場合には、自動的にスクロールバーが表示される。
+
+</dl>
+
+
+<h2>6. 例外発生時のルール</h2>
+
+<dl>
+  <dt> <u>SQLite への接続に失敗したとき</u>
+  <dd> 致命的なエラーとしてアプリを終了する。
+      
+  <dt> <u>CSVファイルへのファイルアクセスエラー</u>
+  <dd> エラーを表示し、処理を中断する。
+
+  <dt> <u>CSVファイルの文法異常</u>
+  <dd> エラーのあった行を表示し、処理を中断する。
+
+</dl>
