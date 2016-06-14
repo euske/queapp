@@ -32,10 +32,11 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
             this.notifyIcon1 = new System.Windows.Forms.NotifyIcon(this.components);
             this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
-            this.startClassToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.showResultsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.quitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.registerNewClassToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.startClassToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.showClassResultsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.quitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.contextMenuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -51,29 +52,10 @@
             this.contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.registerNewClassToolStripMenuItem,
             this.startClassToolStripMenuItem,
-            this.showResultsToolStripMenuItem,
+            this.showClassResultsToolStripMenuItem,
             this.quitToolStripMenuItem});
             this.contextMenuStrip1.Name = "contextMenuStrip1";
             this.contextMenuStrip1.Size = new System.Drawing.Size(183, 114);
-            // 
-            // startClassToolStripMenuItem
-            // 
-            this.startClassToolStripMenuItem.Name = "startClassToolStripMenuItem";
-            this.startClassToolStripMenuItem.Size = new System.Drawing.Size(182, 22);
-            this.startClassToolStripMenuItem.Text = "Start Class";
-            // 
-            // showResultsToolStripMenuItem
-            // 
-            this.showResultsToolStripMenuItem.Name = "showResultsToolStripMenuItem";
-            this.showResultsToolStripMenuItem.Size = new System.Drawing.Size(182, 22);
-            this.showResultsToolStripMenuItem.Text = "Show Results";
-            // 
-            // quitToolStripMenuItem
-            // 
-            this.quitToolStripMenuItem.Name = "quitToolStripMenuItem";
-            this.quitToolStripMenuItem.Size = new System.Drawing.Size(182, 22);
-            this.quitToolStripMenuItem.Text = "Quit";
-            this.quitToolStripMenuItem.Click += new System.EventHandler(this.quitToolStripMenuItem_Click);
             // 
             // registerNewClassToolStripMenuItem
             // 
@@ -82,11 +64,34 @@
             this.registerNewClassToolStripMenuItem.Text = "Register New Class...";
             this.registerNewClassToolStripMenuItem.Click += new System.EventHandler(this.registerNewClassToolStripMenuItem_Click);
             // 
+            // startClassToolStripMenuItem
+            // 
+            this.startClassToolStripMenuItem.Name = "startClassToolStripMenuItem";
+            this.startClassToolStripMenuItem.Size = new System.Drawing.Size(182, 22);
+            this.startClassToolStripMenuItem.Text = "Start Class";
+            // 
+            // showClassResultsToolStripMenuItem
+            // 
+            this.showClassResultsToolStripMenuItem.Name = "showClassResultsToolStripMenuItem";
+            this.showClassResultsToolStripMenuItem.Size = new System.Drawing.Size(182, 22);
+            this.showClassResultsToolStripMenuItem.Text = "Show Class Results";
+            // 
+            // quitToolStripMenuItem
+            // 
+            this.quitToolStripMenuItem.Name = "quitToolStripMenuItem";
+            this.quitToolStripMenuItem.Size = new System.Drawing.Size(182, 22);
+            this.quitToolStripMenuItem.Text = "Quit";
+            this.quitToolStripMenuItem.Click += new System.EventHandler(this.quitToolStripMenuItem_Click);
+            // 
+            // openFileDialog1
+            // 
+            this.openFileDialog1.Filter = "CSV files (*.csv)|*.csv|Text files (*.txt)|*.txt|All files (*.*)|*.*\"";
+            // 
             // Form1
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(284, 283);
+            this.ClientSize = new System.Drawing.Size(284, 261);
             this.Name = "Form1";
             this.Text = "Form1";
             this.contextMenuStrip1.ResumeLayout(false);
@@ -100,8 +105,9 @@
         private System.Windows.Forms.ContextMenuStrip contextMenuStrip1;
         private System.Windows.Forms.ToolStripMenuItem quitToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem startClassToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem showResultsToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem showClassResultsToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem registerNewClassToolStripMenuItem;
+        private System.Windows.Forms.OpenFileDialog openFileDialog1;
     }
 }
 

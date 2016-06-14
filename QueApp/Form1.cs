@@ -27,30 +27,51 @@ namespace QueApp {
             Application.Exit();
         }
 
+        private void registerNewClassToolStripMenuItem_Click(object sender, EventArgs e) {
+            if (openFileDialog1.ShowDialog() == DialogResult.OK) {
+                RegisterNewClass(openFileDialog1.FileName);
+            }
+        }
+
         private void RefreshSubmenus() {
             startClassToolStripMenuItem.DropDownItems.Clear();
-            showResultsToolStripMenuItem.DropDownItems.Clear();
+            showClassResultsToolStripMenuItem.DropDownItems.Clear();
             foreach (int classId in database.GetClassIds()) {
                 string name = database.GetClassName(classId);
                 ToolStripMenuItem startClassItem = new ToolStripMenuItem();
                 startClassItem.Text = name;
                 startClassItem.Click += startClassItem_Click;
+                startClassItem.Tag = classId;
                 startClassToolStripMenuItem.DropDownItems.Add(startClassItem);
-                ToolStripMenuItem showResultsItem = new ToolStripMenuItem();
-                showResultsItem.Text = name;
-                showResultsItem.Click += showResultsItem_Click;
-                showResultsToolStripMenuItem.DropDownItems.Add(showResultsItem);
+                ToolStripMenuItem showClassResultsItem = new ToolStripMenuItem();
+                showClassResultsItem.Text = name;
+                showClassResultsItem.Click += showResultsItem_Click;
+                showClassResultsItem.Tag = classId;
+                showClassResultsToolStripMenuItem.DropDownItems.Add(showClassResultsItem);
             }
         }
 
         private void startClassItem_Click(object sender, EventArgs args) {
+            if (sender is ToolStripMenuItem) {
+                int classId = (int)(sender as ToolStripMenuItem).Tag;
+                StartClass(classId);
+            }
         }
 
         private void showResultsItem_Click(object sender, EventArgs args) {
+            if (sender is ToolStripMenuItem) {
+                int classId = (int)(sender as ToolStripMenuItem).Tag;
+                ShowClassResults(classId);
+            }
         }
 
-        private void registerNewClassToolStripMenuItem_Click(object sender, EventArgs e) {
+        private void RegisterNewClass(string path) {
+        }
 
+        private void StartClass(int classId) {
+        }
+
+        private void ShowClassResults(int classId) {
         }
     }
 }
