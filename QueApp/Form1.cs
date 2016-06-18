@@ -32,6 +32,8 @@ namespace QueApp {
         }
 
         private void quitToolStripMenuItem_Click(object sender, EventArgs e) {
+            this.questionForm.alive = false;
+            this.resultForm.alive = false;
             Application.Exit();
         }
 
@@ -88,6 +90,7 @@ namespace QueApp {
         }
 
         private void StartClass(int classId) {
+            questionForm.SetClassId(classId);
             questionForm.Show();
         }
 
