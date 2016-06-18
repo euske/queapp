@@ -26,7 +26,7 @@ namespace QueApp {
                     cmd.ExecuteNonQuery();
                     cmd.CommandText = (
                         "CREATE TABLE Question "+
-                        "(questionId INTEGER PRIMARY KEY, studentId INTEGER, classId INTEGER,"+
+                        "(questionId INTEGER PRIMARY KEY, studentId INTEGER, "+
                         " questionDate TEXT, questionText TEXT, answerScore INTEGER);");
                     cmd.ExecuteNonQuery();
                     Console.WriteLine("Database: SQLite tables created.");
@@ -130,8 +130,8 @@ namespace QueApp {
             using (SQLiteCommand cmd = new SQLiteCommand(this.connection)) {
                 try {
                     cmd.CommandText = (
-                        "SELECT studentId, count(questionId) FROM Question "+
-                        "WHERE classId=@classId;");
+                        "SELECT studentId, (SELECT count(questionId) FROM Question WHERE Student.studentId = Question.studentId) "+
+                        "FROM Student WHERE classId=@classId;");
                     cmd.Prepare();
                     cmd.Parameters.AddWithValue("@classId", classId);
                     using (SQLiteDataReader reader = cmd.ExecuteReader()) {
@@ -154,6 +154,9 @@ namespace QueApp {
                 }
             }
 
+            if (students.Count == 0) {
+                return -1;
+            }
             Random rand = new Random();
             int i = rand.Next(students.Count);
             return students[i];
@@ -209,7 +212,7 @@ namespace QueApp {
                 try {
                     cmd.CommandText = (
                         "SELECT questionDate, studentName, answerScore, questionText "+
-                        "FROM Question, Student WHERE Question.classId=@classId "+
+                        "FROM Question, Student WHERE Student.classId=@classId "+
                         "AND Question.studentId = Student.studentId;");
                     cmd.Prepare();
                     cmd.Parameters.AddWithValue("@classId", classId);
@@ -251,7 +254,7 @@ namespace QueApp {
                     try {
                         cmd.CommandText = (
                             "SELECT questionDate, studentName, answerScore, questionText "+
-                            "FROM Question, Student WHERE Question.classId=@classId "+
+                            "FROM Question, Student WHERE Student.classId=@classId "+
                             "AND Question.studentId = Student.studentId;");
                         cmd.Prepare();
                         cmd.Parameters.AddWithValue("@classId", classId);
