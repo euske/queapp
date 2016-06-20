@@ -12,14 +12,23 @@ namespace QueApp {
 
         public Database database;
         public bool alive;
+        public int classId;
 
         public ResultForm() {
             InitializeComponent();
             this.alive = true;
         }
 
-        private void ResultForm_Load(object sender, EventArgs e) {
-            
+        public void SetClassId(int classId) {
+            this.classId = classId;
+            string className = this.database.GetClassName(this.classId);
+            this.classNameLabel.Text = className;
+            ShowQuestionResults();
+        }
+
+        public void ShowQuestionResults() {
+            DataTable table = this.database.GetQuestionResultTable(this.classId);
+            this.questionResultsTableGrid.DataSource = table;
         }
 
         private void ResultForm_FormClosing(object sender, FormClosingEventArgs e) {

@@ -38,10 +38,6 @@ namespace QueApp {
             this.questionTextBox.Text = "";
         }
 
-        private void QuestionForm_Load(object sender, EventArgs e) {
-
-        }
-
         private void QuestionForm_FormClosing(object sender, FormClosingEventArgs e) {
             e.Cancel = this.alive;
             this.Hide();

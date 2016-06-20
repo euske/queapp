@@ -95,6 +95,7 @@ namespace QueApp {
         }
 
         private void ShowClassResults(int classId) {
+            resultForm.SetClassId(classId); 
             resultForm.Show();
         }
     }

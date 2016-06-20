@@ -131,7 +131,6 @@
             this.Name = "QuestionForm";
             this.Text = "QuestionForm";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.QuestionForm_FormClosing);
-            this.Load += new System.EventHandler(this.QuestionForm_Load);
             this.flowLayoutPanel1.ResumeLayout(false);
             this.tableLayoutPanel1.ResumeLayout(false);
             this.tableLayoutPanel1.PerformLayout();
