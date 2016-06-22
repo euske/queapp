@@ -13,11 +13,16 @@ namespace QueApp {
             Application.SetCompatibleTextRenderingDefault(false);
 
             string path = "URI=file:queapp.db";
-            using (SQLiteConnection conn = new SQLiteConnection(path)) {
-                conn.Open();
-                Database database = new Database(conn);
-                Application.Run(new Form1(database));
-                conn.Close();
+            try {
+                using (SQLiteConnection conn = new SQLiteConnection(path)) {
+                    conn.Open();
+                    Database database = new Database(conn);
+                    Application.Run(new Form1(database));
+                    conn.Close();
+                }
+            } catch (SQLiteException e) {
+                MessageBox.Show("Cannot connect to SQLite", "Fatal Error",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
     }
