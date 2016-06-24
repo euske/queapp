@@ -20,7 +20,7 @@ namespace QueApp {
                     Application.Run(new Form1(database));
                     conn.Close();
                 }
-            } catch (SQLiteException e) {
+            } catch (SQLiteException ) {
                 MessageBox.Show("Cannot connect to SQLite", "Fatal Error",
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
             }

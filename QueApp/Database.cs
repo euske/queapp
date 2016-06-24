@@ -17,21 +17,20 @@ namespace QueApp {
             using (SQLiteCommand cmd = new SQLiteCommand(this.connection)) {
                 try {
                     cmd.CommandText = (
-                        "CREATE TABLE Class "+
+                        "CREATE TABLE Class " +
                         "(classId INTEGER PRIMARY KEY, className TEXT);");
                     cmd.ExecuteNonQuery();
                     cmd.CommandText = (
-                        "CREATE TABLE Student "+
+                        "CREATE TABLE Student " +
                         "(studentId INTEGER PRIMARY KEY, classId INTEGER, studentName TEXT);");
                     cmd.ExecuteNonQuery();
                     cmd.CommandText = (
-                        "CREATE TABLE Question "+
-                        "(questionId INTEGER PRIMARY KEY, studentId INTEGER, "+
+                        "CREATE TABLE Question " +
+                        "(questionId INTEGER PRIMARY KEY, studentId INTEGER, " +
                         " questionDate TEXT, questionText TEXT, answerScore INTEGER);");
                     cmd.ExecuteNonQuery();
                     Console.WriteLine("Database: SQLite tables created.");
-                }
-                catch (SQLiteException e) {
+                } catch (SQLiteException e) {
                     Console.WriteLine("Database: " + e);
                 }
             }
@@ -49,8 +48,7 @@ namespace QueApp {
                             ids.Add(id);
                         }
                     }
-                }
-                catch (SQLiteException e) {
+                } catch (SQLiteException e) {
                     Console.WriteLine("Database.GetClassIds: " + e);
                 }
             }
@@ -69,8 +67,7 @@ namespace QueApp {
                             name = reader.GetString(0);
                         }
                     }
-                }
-                catch (SQLiteException e) {
+                } catch (SQLiteException e) {
                     Console.WriteLine("Database.GetClassName: " + e);
                 }
             }
@@ -94,8 +91,7 @@ namespace QueApp {
                         cmd.Parameters.AddWithValue("@studentName", studentName);
                         cmd.ExecuteNonQuery();
                     }
-                }
-                catch (SQLiteException e) {
+                } catch (SQLiteException e) {
                     Console.WriteLine("Database.RegisterNewClass: " + e);
                 }
             }
@@ -130,7 +126,8 @@ namespace QueApp {
             using (SQLiteCommand cmd = new SQLiteCommand(this.connection)) {
                 try {
                     cmd.CommandText = (
-                        "SELECT studentId, (SELECT count(questionId) FROM Question WHERE Student.studentId = Question.studentId) "+
+                        "SELECT studentId, " +
+                        "(SELECT count(questionId) FROM Question WHERE Student.studentId = Question.studentId) " +
                         "FROM Student WHERE classId=@classId;");
                     cmd.Prepare();
                     cmd.Parameters.AddWithValue("@classId", classId);
@@ -148,8 +145,7 @@ namespace QueApp {
                             }
                         }
                     }
-                }
-                catch (SQLiteException e) {
+                } catch (SQLiteException e) {
                     Console.WriteLine("Database.GetNextStudentId: " + e);
                 }
             }
@@ -167,7 +163,7 @@ namespace QueApp {
             using (SQLiteCommand cmd = new SQLiteCommand(this.connection)) {
                 try {
                     cmd.CommandText = (
-                        "SELECT studentName FROM Student "+
+                        "SELECT studentName FROM Student " +
                         "WHERE studentId=@studentId;");
                     cmd.Prepare();
                     cmd.Parameters.AddWithValue("@studentId", studentId);
@@ -176,8 +172,7 @@ namespace QueApp {
                             name = reader.GetString(0);
                         }
                     }
-                }
-                catch (SQLiteException e) {
+                } catch (SQLiteException e) {
                     Console.WriteLine("Database.GetStudentName: " + e);
                 }
             }
@@ -188,15 +183,14 @@ namespace QueApp {
             using (SQLiteCommand cmd = new SQLiteCommand(this.connection)) {
                 try {
                     cmd.CommandText = (
-                        "INSERT INTO Question (studentId, questionDate, questionText, answerScore) "+
+                        "INSERT INTO Question (studentId, questionDate, questionText, answerScore) " +
                         "VALUES (@studentId, datetime('now'), @questionText, @answerScore);");
                     cmd.Prepare();
                     cmd.Parameters.AddWithValue("@studentId", studentId);
                     cmd.Parameters.AddWithValue("@questionText", questionText);
                     cmd.Parameters.AddWithValue("@answerScore", answerScore);
                     cmd.ExecuteNonQuery();
-                }
-                catch (SQLiteException e) {
+                } catch (SQLiteException e) {
                     Console.WriteLine("Database.StoreResult: " + e);
                 }
             }
@@ -211,8 +205,8 @@ namespace QueApp {
             using (SQLiteCommand cmd = new SQLiteCommand(this.connection)) {
                 try {
                     cmd.CommandText = (
-                        "SELECT questionDate, studentName, answerScore, questionText "+
-                        "FROM Question, Student WHERE Student.classId=@classId "+
+                        "SELECT questionDate, studentName, answerScore, questionText " +
+                        "FROM Question, Student WHERE classId=@classId " +
                         "AND Question.studentId = Student.studentId;");
                     cmd.Prepare();
                     cmd.Parameters.AddWithValue("@classId", classId);
@@ -226,8 +220,7 @@ namespace QueApp {
                             result.Rows.Add(row);
                         }
                     }
-                }
-                catch (SQLiteException e) {
+                } catch (SQLiteException e) {
                     Console.WriteLine("Database.GetQuestionResultTable: " + e);
                 }
             }
@@ -237,12 +230,13 @@ namespace QueApp {
         public void ResetResults(int classId) {
             using (SQLiteCommand cmd = new SQLiteCommand(this.connection)) {
                 try {
-                    cmd.CommandText = "DELETE FROM Question WHERE classId=@classId;";
+                    cmd.CommandText = (
+                        "DELETE FROM Question WHERE studentID IN " +
+                        "(SELECT studentId FROM Student WHERE classId=@classId);");
                     cmd.Prepare();
                     cmd.Parameters.AddWithValue("@classId", classId);
                     cmd.ExecuteNonQuery();
-                }
-                catch (SQLiteException e) {
+                } catch (SQLiteException e) {
                     Console.WriteLine("Database.ResetResults: " + e);
                 }
             }
@@ -253,8 +247,8 @@ namespace QueApp {
                 using (SQLiteCommand cmd = new SQLiteCommand(this.connection)) {
                     try {
                         cmd.CommandText = (
-                            "SELECT questionDate, studentName, answerScore, questionText "+
-                            "FROM Question, Student WHERE Student.classId=@classId "+
+                            "SELECT questionDate, studentName, answerScore, questionText " +
+                            "FROM Question, Student WHERE Student.classId=@classId " +
                             "AND Question.studentId = Student.studentId;");
                         cmd.Prepare();
                         cmd.Parameters.AddWithValue("@classId", classId);
@@ -269,8 +263,7 @@ namespace QueApp {
                                 writer.WriteLine(line);
                             }
                         }
-                    }
-                    catch (SQLiteException e) {
+                    } catch (SQLiteException e) {
                         Console.WriteLine("Database.ExportResultsToCSV: " + e);
                     }
                 }
