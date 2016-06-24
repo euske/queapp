@@ -23,7 +23,7 @@ namespace QueApp {
         public void SetClassId(int classId) {
             this.classId = classId;
             string className = this.database.GetClassName(this.classId);
-            this.classNameLabel.Text = className;
+            this.Text = className;
             ShowNextStudent();
         }
 
@@ -49,14 +49,14 @@ namespace QueApp {
 
         private void answerOKButton_Click(object sender, EventArgs e) {
             if (0 <= this.currentStudentId) {
-                this.database.StoreResult(this.currentStudentId, this.questionTextBox.Text, +1);
+                this.database.StoreResult(this.currentStudentId, this.questionTextBox.Text, 1);
             }
             ShowNextStudent();
         }
 
         private void answerNGButton_Click(object sender, EventArgs e) {
             if (0 <= this.currentStudentId) {
-                this.database.StoreResult(this.currentStudentId, this.questionTextBox.Text, -1);
+                this.database.StoreResult(this.currentStudentId, this.questionTextBox.Text, 0);
             }
             ShowNextStudent();
         }

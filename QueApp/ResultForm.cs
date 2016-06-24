@@ -40,7 +40,8 @@ namespace QueApp {
             string text = "Reset all the results for class " + this.classNameLabel.Text + "?";
             if (MessageBox.Show(this, text, "Warning: Reset Results",
                 MessageBoxButtons.OKCancel, MessageBoxIcon.Warning) == DialogResult.OK) {
-                    this.database.ResetResults(this.classId);
+                this.database.ResetResults(this.classId);
+                this.ShowQuestionResults();
             }
         }
 
