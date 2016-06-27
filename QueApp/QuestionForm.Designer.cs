@@ -147,8 +147,12 @@
             this.ClientSize = new System.Drawing.Size(224, 101);
             this.Controls.Add(this.tableLayoutPanel1);
             this.Controls.Add(this.flowLayoutPanel1);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.SizableToolWindow;
+            this.MaximizeBox = false;
+            this.MinimizeBox = false;
             this.Name = "QuestionForm";
             this.Text = "QuestionForm";
+            this.TopMost = true;
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.QuestionForm_FormClosing);
             this.flowLayoutPanel1.ResumeLayout(false);
             this.tableLayoutPanel1.ResumeLayout(false);

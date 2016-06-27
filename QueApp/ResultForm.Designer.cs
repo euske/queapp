@@ -23,6 +23,7 @@
         /// the contents of this method with the code editor.
         /// </summary>
         private void InitializeComponent() {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ResultForm));
             this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
             this.exportResultsToCSVButton = new System.Windows.Forms.Button();
             this.resetResultsButton = new System.Windows.Forms.Button();
@@ -115,6 +116,7 @@
             this.Controls.Add(this.questionResultsTableGrid);
             this.Controls.Add(this.panel1);
             this.Controls.Add(this.flowLayoutPanel1);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "ResultForm";
             this.Text = "ResultForm";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.ResultForm_FormClosing);
