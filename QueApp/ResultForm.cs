@@ -10,20 +10,13 @@ using System.Windows.Forms;
 namespace QueApp {
     public partial class ResultForm : Form {
 
-        public Database database;
-        public bool alive;
-        public int classId;
+        private Database database;
+        private int classId;
 
-        public ResultForm() {
+        public ResultForm(Database database, int classId) {
             InitializeComponent();
-            this.alive = true;
-        }
-
-        public void SetClassId(int classId) {
+            this.database = database;
             this.classId = classId;
-            string className = this.database.GetClassName(this.classId);
-            this.classNameLabel.Text = className;
-            ShowQuestionResults();
         }
 
         public void ShowQuestionResults() {
@@ -31,9 +24,10 @@ namespace QueApp {
             this.questionResultsTableGrid.DataSource = table;
         }
 
-        private void ResultForm_FormClosing(object sender, FormClosingEventArgs e) {
-            e.Cancel = this.alive;
-            this.Hide();
+        private void ResultForm_Load(object sender, EventArgs e) {
+            string className = this.database.GetClassName(this.classId);
+            this.classNameLabel.Text = className;
+            this.ShowQuestionResults();
         }
 
         private void resetResultsButton_Click(object sender, EventArgs e) {

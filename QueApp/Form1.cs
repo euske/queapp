@@ -10,14 +10,10 @@ namespace QueApp {
 
         private Database database;
         private QuestionForm questionForm;
-        private ResultForm resultForm;
 
         public Form1(Database database) {
             this.database = database;
-            this.questionForm = new QuestionForm();
-            this.questionForm.database = database;
-            this.resultForm = new ResultForm();
-            this.resultForm.database = database;
+            this.questionForm = new QuestionForm(database);
             InitializeComponent();
             RefreshSubmenus();
         }
@@ -32,8 +28,7 @@ namespace QueApp {
         }
 
         private void quitToolStripMenuItem_Click(object sender, EventArgs e) {
-            this.questionForm.alive = false;
-            this.resultForm.alive = false;
+            this.questionForm.Close();
             Application.Exit();
         }
 
@@ -95,7 +90,7 @@ namespace QueApp {
         }
 
         private void ShowClassResults(int classId) {
-            resultForm.SetClassId(classId); 
+            ResultForm resultForm = new ResultForm(database, classId);
             resultForm.Show();
         }
     }

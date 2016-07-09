@@ -42,16 +42,16 @@
             this.flowLayoutPanel1.Controls.Add(this.resetResultsButton);
             this.flowLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.flowLayoutPanel1.FlowDirection = System.Windows.Forms.FlowDirection.RightToLeft;
-            this.flowLayoutPanel1.Location = new System.Drawing.Point(0, 252);
+            this.flowLayoutPanel1.Location = new System.Drawing.Point(0, 232);
             this.flowLayoutPanel1.Name = "flowLayoutPanel1";
-            this.flowLayoutPanel1.Size = new System.Drawing.Size(384, 31);
+            this.flowLayoutPanel1.Size = new System.Drawing.Size(384, 29);
             this.flowLayoutPanel1.TabIndex = 0;
             // 
             // exportResultsToCSVButton
             // 
             this.exportResultsToCSVButton.Location = new System.Drawing.Point(306, 3);
             this.exportResultsToCSVButton.Name = "exportResultsToCSVButton";
-            this.exportResultsToCSVButton.Size = new System.Drawing.Size(75, 25);
+            this.exportResultsToCSVButton.Size = new System.Drawing.Size(75, 23);
             this.exportResultsToCSVButton.TabIndex = 0;
             this.exportResultsToCSVButton.Text = "Export...";
             this.exportResultsToCSVButton.UseVisualStyleBackColor = true;
@@ -61,7 +61,7 @@
             // 
             this.resetResultsButton.Location = new System.Drawing.Point(225, 3);
             this.resetResultsButton.Name = "resetResultsButton";
-            this.resetResultsButton.Size = new System.Drawing.Size(75, 25);
+            this.resetResultsButton.Size = new System.Drawing.Size(75, 23);
             this.resetResultsButton.TabIndex = 1;
             this.resetResultsButton.Text = "Reset...";
             this.resetResultsButton.UseVisualStyleBackColor = true;
@@ -77,10 +77,10 @@
             this.questionResultsTableGrid.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.questionResultsTableGrid.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.questionResultsTableGrid.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.questionResultsTableGrid.Location = new System.Drawing.Point(0, 34);
+            this.questionResultsTableGrid.Location = new System.Drawing.Point(0, 31);
             this.questionResultsTableGrid.Name = "questionResultsTableGrid";
             this.questionResultsTableGrid.ReadOnly = true;
-            this.questionResultsTableGrid.Size = new System.Drawing.Size(384, 218);
+            this.questionResultsTableGrid.Size = new System.Drawing.Size(384, 201);
             this.questionResultsTableGrid.TabIndex = 2;
             // 
             // saveFileDialog1
@@ -94,7 +94,7 @@
             this.panel1.Dock = System.Windows.Forms.DockStyle.Top;
             this.panel1.Location = new System.Drawing.Point(0, 0);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(384, 34);
+            this.panel1.Size = new System.Drawing.Size(384, 31);
             this.panel1.TabIndex = 3;
             // 
             // classNameLabel
@@ -103,23 +103,23 @@
             this.classNameLabel.Font = new System.Drawing.Font("MS UI Gothic", 15.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
             this.classNameLabel.Location = new System.Drawing.Point(0, 0);
             this.classNameLabel.Name = "classNameLabel";
-            this.classNameLabel.Size = new System.Drawing.Size(384, 34);
+            this.classNameLabel.Size = new System.Drawing.Size(384, 31);
             this.classNameLabel.TabIndex = 1;
             this.classNameLabel.Text = "className";
             this.classNameLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // ResultForm
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(384, 283);
+            this.ClientSize = new System.Drawing.Size(384, 261);
             this.Controls.Add(this.questionResultsTableGrid);
             this.Controls.Add(this.panel1);
             this.Controls.Add(this.flowLayoutPanel1);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "ResultForm";
             this.Text = "ResultForm";
-            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.ResultForm_FormClosing);
+            this.Load += new System.EventHandler(this.ResultForm_Load);
             this.flowLayoutPanel1.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.questionResultsTableGrid)).EndInit();
             this.panel1.ResumeLayout(false);

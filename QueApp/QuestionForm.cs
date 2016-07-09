@@ -10,13 +10,14 @@ using System.Windows.Forms;
 namespace QueApp {
     public partial class QuestionForm : Form {
 
-        public Database database;
-        public bool alive;
-        public int classId;
-        public int currentStudentId;
+        private Database database;
+        private int classId;
+        private int currentStudentId;
+        private bool alive;
 
-        public QuestionForm() {
+        public QuestionForm(Database database) {
             InitializeComponent();
+            this.database = database;
             this.alive = true;
         }
 
@@ -36,6 +37,11 @@ namespace QueApp {
                 }
             }
             this.questionTextBox.Text = "";
+        }
+
+        public void Close() {
+            this.alive = false;
+            base.Close();
         }
 
         private void QuestionForm_FormClosing(object sender, FormClosingEventArgs e) {
