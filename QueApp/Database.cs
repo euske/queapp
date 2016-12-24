@@ -1,29 +1,48 @@
-﻿using System;
+﻿//  Database.cs
+//
+using System;
 using System.IO;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SQLite;
 
 namespace QueApp {
+
+    /// <summary>
+    ///   データベースに対する処理をすべておこなう DAO クラス。
+    ///   SQL文はすべてこのクラスに集約されている。
+    /// </summary>
     public class Database {
+
+        // SQLite への接続。
         private SQLiteConnection connection;
 
+	/// <summary>
+	///   コンストラクタ。
+	/// </summary>
         public Database(SQLiteConnection conn) {
             this.connection = conn;
             createTables();
         }
 
+        /// <summary>
+        ///   各種テーブルを初期化する。
+        ///   初回起動時にのみ実行され、2度目以降のエラーは無視する。
+        /// </summary>
         private void createTables() {
             using (SQLiteCommand cmd = new SQLiteCommand(this.connection)) {
                 try {
+                    // Class テーブル。
                     cmd.CommandText = (
                         "CREATE TABLE Class " +
                         "(classId INTEGER PRIMARY KEY, className TEXT);");
                     cmd.ExecuteNonQuery();
+                    // Student テーブル。
                     cmd.CommandText = (
                         "CREATE TABLE Student " +
                         "(studentId INTEGER PRIMARY KEY, classId INTEGER, studentName TEXT);");
                     cmd.ExecuteNonQuery();
+                    // Question テーブル。
                     cmd.CommandText = (
                         "CREATE TABLE Question " +
                         "(questionId INTEGER PRIMARY KEY, studentId INTEGER, " +
@@ -36,6 +55,9 @@ namespace QueApp {
             }
         }
 
+	/// <summary>
+	///   登録されている授業のID一覧を返す。
+	/// </summary>
         public int[] GetClassIds() {
             List<int> ids = new List<int>();
 
@@ -55,6 +77,9 @@ namespace QueApp {
             return ids.ToArray();
         }
 
+	/// <summary>
+	///   指定された授業IDの授業名を返す。
+	/// </summary>
         public string GetClassName(int classId) {
             string name = null;
             using (SQLiteCommand cmd = new SQLiteCommand(this.connection)) {
@@ -74,6 +99,9 @@ namespace QueApp {
             return name;
         }
 
+	/// <summary>
+	///   新規に授業を登録し、その授業IDを返す。
+	/// </summary>
         public int RegisterNewClass(string className, string[] studentNames) {
             int classId = -1;
             using (SQLiteCommand cmd = new SQLiteCommand(this.connection)) {
@@ -85,7 +113,8 @@ namespace QueApp {
                     classId = (int)this.connection.LastInsertRowId;
 
                     foreach (string studentName in studentNames) {
-                        cmd.CommandText = "INSERT INTO Student VALUES (NULL, @classId, @studentName);";
+                        cmd.CommandText = ("INSERT INTO Student VALUES " +
+                                           "(NULL, @classId, @studentName);");
                         cmd.Prepare();
                         cmd.Parameters.AddWithValue("@classId", classId);
                         cmd.Parameters.AddWithValue("@studentName", studentName);
@@ -98,36 +127,17 @@ namespace QueApp {
             return classId;
         }
 
-        public static string[][] ParseCSVFile(string path) {
-            List<string[]> rows = new List<string[]>();
-            using (StreamReader reader = new StreamReader(path)) {
-                while (true) {
-                    string line = reader.ReadLine();
-                    if (line == null) break;
-                    List<string> cols = new List<string>();
-                    int colstart = 0;
-                    for (int i = 0; i < line.Length; i++) {
-                        char c = line[i];
-                        if (c == ',') {
-                            string value = line.Substring(colstart, i - colstart);
-                            cols.Add(value);
-                            colstart = i + 1;
-                        }
-                    }
-                    cols.Add(line.Substring(colstart));
-                    rows.Add(cols.ToArray());
-                }
-            }
-            return rows.ToArray();
-        }
-
+	/// <summary>
+	///   指定された授業で、次にあてるべき生徒IDを返す。
+	/// </summary>
         public int GetNextStudentId(int classId) {
             List<int> students = new List<int>();
             using (SQLiteCommand cmd = new SQLiteCommand(this.connection)) {
                 try {
                     cmd.CommandText = (
                         "SELECT studentId, " +
-                        "(SELECT count(questionId) FROM Question WHERE Student.studentId = Question.studentId) " +
+                        "(SELECT count(questionId) FROM Question" +
+                        " WHERE Student.studentId = Question.studentId) " +
                         "FROM Student WHERE classId=@classId;");
                     cmd.Prepare();
                     cmd.Parameters.AddWithValue("@classId", classId);
@@ -158,6 +168,9 @@ namespace QueApp {
             return students[i];
         }
 
+	/// <summary>
+	///   指定された生徒IDに対する生徒名を返す。
+	/// </summary>
         public string GetStudentName(int studentId) {
             string name = null;
             using (SQLiteCommand cmd = new SQLiteCommand(this.connection)) {
@@ -179,11 +192,15 @@ namespace QueApp {
             return name;
         }
 
+	/// <summary>
+	///   生徒に対する質問とその答えを記録する。
+	/// </summary>
         public void StoreResult(int studentId, string questionText, int answerScore) {
             using (SQLiteCommand cmd = new SQLiteCommand(this.connection)) {
                 try {
                     cmd.CommandText = (
-                        "INSERT INTO Question (studentId, questionDate, questionText, answerScore) " +
+                        "INSERT INTO Question "+
+                        "(studentId, questionDate, questionText, answerScore) " +
                         "VALUES (@studentId, datetime('now'), @questionText, @answerScore);");
                     cmd.Prepare();
                     cmd.Parameters.AddWithValue("@studentId", studentId);
@@ -196,6 +213,9 @@ namespace QueApp {
             }
         }
 
+	/// <summary>
+	///   指定された授業IDの全回答を DataTable 型で返す。
+	/// </summary>
         public DataTable GetQuestionResultTable(int classId) {
             DataTable result = new DataTable();
             result.Columns.Add("QuestionDate", typeof(string));
@@ -227,6 +247,9 @@ namespace QueApp {
             return result;
         }
 
+	/// <summary>
+	///   指定された授業IDの結果を全消去する。
+	/// </summary>
         public void ResetResults(int classId) {
             using (SQLiteCommand cmd = new SQLiteCommand(this.connection)) {
                 try {
@@ -242,6 +265,9 @@ namespace QueApp {
             }
         }
 
+	/// <summary>
+	///   指定された授業IDの結果をCSVファイルとして出力する。
+	/// </summary>
         public void ExportResultsToCSV(int classId, string path) {
             using (StreamWriter writer = new StreamWriter(path)) {
                 using (SQLiteCommand cmd = new SQLiteCommand(this.connection)) {

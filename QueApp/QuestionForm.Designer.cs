@@ -61,20 +61,26 @@
             // answerOKButton
             // 
             this.answerOKButton.Image = ((System.Drawing.Image)(resources.GetObject("answerOKButton.Image")));
+            this.answerOKButton.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
             this.answerOKButton.Location = new System.Drawing.Point(59, 3);
             this.answerOKButton.Name = "answerOKButton";
             this.answerOKButton.Size = new System.Drawing.Size(50, 23);
             this.answerOKButton.TabIndex = 3;
+            this.answerOKButton.Text = "(&T)";
+            this.answerOKButton.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             this.answerOKButton.UseVisualStyleBackColor = true;
             this.answerOKButton.Click += new System.EventHandler(this.answerOKButton_Click);
             // 
             // answerNGButton
             // 
             this.answerNGButton.Image = ((System.Drawing.Image)(resources.GetObject("answerNGButton.Image")));
+            this.answerNGButton.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
             this.answerNGButton.Location = new System.Drawing.Point(115, 3);
             this.answerNGButton.Name = "answerNGButton";
             this.answerNGButton.Size = new System.Drawing.Size(50, 23);
             this.answerNGButton.TabIndex = 4;
+            this.answerNGButton.Text = "(&F)";
+            this.answerNGButton.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             this.answerNGButton.UseVisualStyleBackColor = true;
             this.answerNGButton.Click += new System.EventHandler(this.answerNGButton_Click);
             // 
