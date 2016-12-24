@@ -57,7 +57,8 @@ namespace QueApp {
                 if (0 <= this.currentStudentId) {
                     string studentName = this.database.GetStudentName(this.currentStudentId);
                     if (studentName != null) {
-                        this.studentNameLabel.Text = studentName;
+			int nrecords = this.database.GetNumberOfClassRecords(this.currentClassId);
+                        this.studentNameLabel.Text = nrecords + ": " + studentName;
                     }
                 }
             }
