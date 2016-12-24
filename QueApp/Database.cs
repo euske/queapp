@@ -9,6 +9,19 @@ using System.Data.SQLite;
 namespace QueApp {
 
     /// <summary>
+    ///   授業IDを伝える EventArgs。
+    /// </summary>
+    public class ClassIdEventArgs : EventArgs {
+
+	public int classId;
+	
+	public ClassIdEventArgs(int classId) {
+	    this.classId = classId;
+	}
+	
+    }
+    
+    /// <summary>
     ///   データベースに対する処理をすべておこなう DAO クラス。
     ///   SQL文はすべてこのクラスに集約されている。
     /// </summary>
@@ -16,6 +29,9 @@ namespace QueApp {
 
         // SQLite への接続。
         private SQLiteConnection connection;
+
+	// 質問記録に変化があったときに fire する。
+	public event EventHandler<ClassIdEventArgs> RecordUpdated;
 
 	/// <summary>
 	///   コンストラクタ。
@@ -195,7 +211,8 @@ namespace QueApp {
 	/// <summary>
 	///   生徒に対する質問とその答えを記録する。
 	/// </summary>
-        public void StoreResult(int studentId, string questionText, int answerScore) {
+        public void StoreResult(int classId, int studentId,
+				string questionText, int answerScore) {
             using (SQLiteCommand cmd = new SQLiteCommand(this.connection)) {
                 try {
                     cmd.CommandText = (
@@ -207,6 +224,9 @@ namespace QueApp {
                     cmd.Parameters.AddWithValue("@questionText", questionText);
                     cmd.Parameters.AddWithValue("@answerScore", answerScore);
                     cmd.ExecuteNonQuery();
+		    if (RecordUpdated != null) {
+			RecordUpdated(this, new ClassIdEventArgs(classId));
+		    }
                 } catch (SQLiteException e) {
                     Console.WriteLine("Database.StoreResult: " + e);
                 }
@@ -259,6 +279,9 @@ namespace QueApp {
                     cmd.Prepare();
                     cmd.Parameters.AddWithValue("@classId", classId);
                     cmd.ExecuteNonQuery();
+		    if (RecordUpdated != null) {
+			RecordUpdated(this, new ClassIdEventArgs(classId));
+		    }
                 } catch (SQLiteException e) {
                     Console.WriteLine("Database.ResetResults: " + e);
                 }

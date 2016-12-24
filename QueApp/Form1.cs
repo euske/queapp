@@ -1,6 +1,7 @@
 ﻿//  Form1.cs
 //
 using System;
+using System.IO;
 using System.Drawing;
 using System.Collections.Generic;
 using System.Text;
@@ -95,6 +96,10 @@ namespace QueApp {
                 }
             }
             database.RegisterNewClass(className, studentNames.ToArray());
+	    MessageBox.Show(
+		"Class registered: "+className,
+		"QueApp",
+		MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
 	// 授業を開始する。

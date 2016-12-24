@@ -45,7 +45,17 @@ namespace QueApp {
             string className = this.database.GetClassName(this.classId);
             this.classNameLabel.Text = className;
             this.ShowQuestionResults();
+	    this.database.RecordUpdated += Database_RecordUpdated;
         }
+
+	/// <summary>
+	///   質問結果が変化したときに呼ばれる。
+	/// </summary>
+	private void Database_RecordUpdated(object sender, ClassIdEventArgs e) {
+	    if (e.classId == this.classId) {
+		this.ShowQuestionResults();
+	    }
+	}
 
 	/// <summary>
 	///   「Reset Results...」ボタンがクリックされたときに呼ばれる。
@@ -57,7 +67,6 @@ namespace QueApp {
 				MessageBoxButtons.OKCancel,
 				MessageBoxIcon.Warning) == DialogResult.OK) {
                 this.database.ResetResults(this.classId);
-                this.ShowQuestionResults();
             }
         }
 
